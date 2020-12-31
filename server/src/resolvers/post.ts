@@ -1,4 +1,4 @@
-import { Post } from 'src/entities/Post';
+import { Post } from '../entities/Post';
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 
 @Resolver(Post)
