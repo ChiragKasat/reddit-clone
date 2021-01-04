@@ -75,14 +75,6 @@ export class UserResolver {
 			};
 		}
 
-		if (options.username.includes('@')) {
-			return {
-				errors: [
-					{ field: 'username', message: 'username cannot contain @ symbol' }
-				]
-			};
-		}
-
 		if (options.password.length <= 3) {
 			return {
 				errors: [{ field: 'password', message: 'password too weak' }]
@@ -103,13 +95,13 @@ export class UserResolver {
 			return { user };
 		} catch (err) {
 			if (err.code === '23505' || err.detail.includes('already exists')) {
-				const duplicateField = err.detail.split(' ')[1];
-
+				const duplicateField: string = err.detail.split(' ')[1];
+				const field = duplicateField.substring(1, duplicateField.indexOf(')'));
 				return {
 					errors: [
 						{
-							field: duplicateField,
-							message: `${duplicateField} already exists`
+							field,
+							message: `${field} already registered`
 						}
 					]
 				};

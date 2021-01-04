@@ -13,6 +13,11 @@
 	}
 
 	.form-btn {
-		@apply w-full px-1 py-2 mt-6 text-lg text-white bg-teal-600 rounded-lg disabled:opacity-30;
+		@apply flex justify-center w-full px-1 py-2 mt-6 text-lg text-center text-white bg-teal-600 rounded-lg outline-none disabled:opacity-30;
+	}
+
+	.btn-spinner {
+		@apply w-8 h-8 border-4 border-t-4 border-gray-100 border-solid rounded-full animate-spin;
+		border-top-color: #71717a;
 	}
 }

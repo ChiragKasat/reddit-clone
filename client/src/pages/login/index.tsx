@@ -1,25 +1,22 @@
+import Link from 'next/link';
 import Head from 'next/head';
-import { Form, Formik, Field, ErrorMessage } from 'formik';
+import { Form, Formik } from 'formik';
 import * as yup from 'yup';
+import InputField from '../../components/InputField';
+import { toErrorMap } from '../../utils/toErrorMap';
+import { useRouter } from 'next/router';
+import { useLoginMutation } from '../../generated/graphql';
 
 interface LoginProps {}
 
-const RegisterSchema = yup.object().shape({
-	username: yup
-		.string()
-		.min(3, 'Too Short!')
-		.max(25, 'Too Long!')
-		.required('Required')
-		.trim(),
-	password: yup
-		.string()
-		.min(5, 'Too Short!')
-		.max(50, 'Too Long!')
-		.required('Required'),
+const LoginSchema = yup.object().shape({
 	email: yup.string().email('Invalid email').required('Required')
 });
 
 const Login: React.FC<LoginProps> = () => {
+	const router = useRouter();
+	const [, login] = useLoginMutation();
+
 	return (
 		<div>
 			<Head>
@@ -31,37 +28,41 @@ const Login: React.FC<LoginProps> = () => {
 				<div className='mb-6 text-4xl font-bold'>Sign in to your account</div>
 				<Formik
 					initialValues={{ email: '', password: '' }}
-					validationSchema={RegisterSchema}
-					onSubmit={(values, { setSubmitting }) => {
-						//TODO:
+					validationSchema={LoginSchema}
+					onSubmit={async (values, { setErrors }) => {
+						const response = await login(values);
+						if (response.data?.login.errors) {
+							setErrors(toErrorMap(response.data.login.errors));
+						} else if (response.data?.login.user) {
+							router.push('/');
+						}
 					}}
 				>
 					{({ isSubmitting }) => (
 						<Form className='flex flex-col p-10 bg-white rounded-md shadow-md'>
-							<label className='form-label'>Email</label>
-							<Field type='email' name='email' className='input-box' />
-							<ErrorMessage
-								name='email'
-								component='div'
-								className='text-red-600'
-							/>
-							<label className='form-label'>Password</label>
-							<Field type='password' name='password' className='input-box' />
-							<ErrorMessage
-								name='password'
-								component='div'
-								className='text-red-600'
-							/>
+							<InputField type='text' name='email' label='Email' />
+							<InputField type='password' name='password' label='Password' />
+
 							<button
 								type='submit'
 								disabled={isSubmitting}
 								className='form-btn'
 							>
-								Login
+								{isSubmitting ? (
+									<div className='btn-spinner'></div>
+								) : (
+									<> Login </>
+								)}
 							</button>
 						</Form>
 					)}
 				</Formik>
+				<div className='p-5 sm:text-lg'>
+					New here?{' '}
+					<Link href='/register'>
+						<a className='font-bold text-teal-500'>Register</a>
+					</Link>
+				</div>
 			</div>
 		</div>
 	);

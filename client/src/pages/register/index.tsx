@@ -1,6 +1,11 @@
 import Head from 'next/head';
-import { Form, Formik, Field, ErrorMessage } from 'formik';
+import Link from 'next/link';
+import { Form, Formik } from 'formik';
 import * as yup from 'yup';
+import InputField from '../../components/InputField';
+import { useRegisterMutation } from '../../generated/graphql';
+import { toErrorMap } from '../../utils/toErrorMap';
+import { useRouter } from 'next/router';
 
 interface RegisterProps {}
 
@@ -20,6 +25,9 @@ const RegisterSchema = yup.object().shape({
 });
 
 const Register: React.FC<RegisterProps> = () => {
+	const [, register] = useRegisterMutation();
+	const router = useRouter();
+
 	return (
 		<div>
 			<Head>
@@ -32,43 +40,40 @@ const Register: React.FC<RegisterProps> = () => {
 				<Formik
 					initialValues={{ username: '', email: '', password: '' }}
 					validationSchema={RegisterSchema}
-					onSubmit={(values, { setSubmitting }) => {
-						//TODO:
+					onSubmit={async (values, { setErrors }) => {
+						const response = await register(values);
+						if (response.data?.register.errors) {
+							setErrors(toErrorMap(response.data.register.errors));
+						} else if (response.data?.register.user) {
+							router.push('/');
+						}
 					}}
 				>
 					{({ isSubmitting }) => (
 						<Form className='flex flex-col p-10 bg-white rounded-md shadow-md'>
-							<label className='form-label'>Username</label>
-							<Field type='text' name='username' className='input-box' />
-							<ErrorMessage
-								name='username'
-								component='div'
-								className='text-red-600'
-							/>
-							<label className='form-label'>Email</label>
-							<Field type='email' name='email' className='input-box' />
-							<ErrorMessage
-								name='email'
-								component='div'
-								className='text-red-600'
-							/>
-							<label className='form-label'>Password</label>
-							<Field type='password' name='password' className='input-box' />
-							<ErrorMessage
-								name='password'
-								component='div'
-								className='text-red-600'
-							/>
+							<InputField type='text' name='username' label='Username' />
+							<InputField type='email' name='email' label='Email' />
+							<InputField type='password' name='password' label='Password' />
 							<button
 								type='submit'
 								disabled={isSubmitting}
 								className='form-btn'
 							>
-								Register
+								{isSubmitting ? (
+									<div className='btn-spinner'></div>
+								) : (
+									<> Register </>
+								)}
 							</button>
 						</Form>
 					)}
 				</Formik>
+				<div className='p-5 sm:text-lg'>
+					Already registered?{' '}
+					<Link href='/login'>
+						<a className='font-bold text-teal-500'>Login</a>
+					</Link>
+				</div>
 			</div>
 		</div>
 	);
