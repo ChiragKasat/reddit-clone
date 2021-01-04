@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+	.input-box {
+		@apply block px-2 py-1 mb-2 border-2 border-gray-300 border-solid rounded-md outline-none w-72 sm:w-96;
+	}
+
+	.form-label {
+		@apply mb-1 text-gray-500;
+		font-weight: 500;
+	}
+
+	.form-btn {
+		@apply w-full px-1 py-2 mt-6 text-lg text-white bg-teal-600 rounded-lg disabled:opacity-30;
+	}
+}
