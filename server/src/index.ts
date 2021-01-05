@@ -8,7 +8,7 @@ import { InfoResolver } from './resolvers/info';
 import { PostResolver } from './resolvers/post';
 import { UserResolver } from './resolvers/user';
 import { createConnection } from 'typeorm';
-import { __prod__ } from './constants';
+import { COOKIE_NAME, __prod__ } from './constants';
 import { Post } from './entities/Post';
 import { User } from './entities/User';
 import redis from 'redis';
@@ -40,7 +40,7 @@ const main = async () => {
 
 	app.use(
 		session({
-			name: 'hsct',
+			name: COOKIE_NAME,
 			store: new RedisStore({
 				client: redisClient,
 				disableTouch: true

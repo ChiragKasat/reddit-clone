@@ -12,6 +12,7 @@ import {
 	Resolver
 } from 'type-graphql';
 import { MyContext } from 'src/types';
+import { COOKIE_NAME } from '../constants';
 
 @InputType()
 class UsernamePasswordInput {
@@ -134,5 +135,20 @@ export class UserResolver {
 		req.session.userId = user.id;
 
 		return { user };
+	}
+
+	@Mutation(() => Boolean)
+	logout(@Ctx() { req, res }: MyContext) {
+		return new Promise(resolve =>
+			req.session.destroy(err => {
+				res.clearCookie(COOKIE_NAME);
+				if (err) {
+					resolve(false);
+					return;
+				} else {
+					resolve(true);
+				}
+			})
+		);
 	}
 }
