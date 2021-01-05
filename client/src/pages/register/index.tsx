@@ -32,7 +32,6 @@ const Register: React.FC<RegisterProps> = () => {
 		<div>
 			<Head>
 				<title>Reddit Clone | Register</title>
-				<link rel='icon' href='/favicon.ico' />
 			</Head>
 
 			<div className='flex flex-col items-center justify-center w-screen h-screen bg-gray-100'>

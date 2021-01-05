@@ -11,7 +11,11 @@ module.exports = {
 			gray,
 			red
 		},
-		extend: {}
+		extend: {
+			fontFamily: {
+				poppins: "Poppins, 'sans-serif', ui-sans-serif, system-ui"
+			}
+		}
 	},
 	variants: {
 		extend: {

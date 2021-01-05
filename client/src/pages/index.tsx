@@ -6,7 +6,6 @@ export default function Home() {
 		<div className='min-h-screen bg-gray-100'>
 			<Head>
 				<title>Reddit Clone | Home Page</title>
-				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<Navbar />
 		</div>

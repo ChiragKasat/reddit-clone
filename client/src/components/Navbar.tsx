@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import React from 'react';
-import { useMeQuery } from '../generated/graphql';
+import { useLogoutMutation, useMeQuery } from '../generated/graphql';
 
 interface NavbarProps {}
 
 const Navbar: React.FC<NavbarProps> = () => {
 	const [{ data }] = useMeQuery();
+	const [{ fetching }, logout] = useLogoutMutation();
 
 	let body = null;
 	if (data?.me) {
@@ -14,7 +15,15 @@ const Navbar: React.FC<NavbarProps> = () => {
 				<Link href='/'>
 					<a className='navbar-link'>{data.me?.username}</a>
 				</Link>
-				<button className='navbar-link'>Logout</button>
+				<button
+					className='navbar-link'
+					onClick={() => {
+						logout();
+					}}
+					disabled={fetching}
+				>
+					{fetching ? <div className='btn-spinner'></div> : <> Logout </>}
+				</button>
 			</nav>
 		);
 	} else {
@@ -34,7 +43,7 @@ const Navbar: React.FC<NavbarProps> = () => {
 			<header className='text-gray-600 bg-white body-font'>
 				<div className='container flex flex-col flex-wrap items-center p-5 mx-auto md:flex-row'>
 					<Link href='/'>
-						<a className='flex items-center mb-4 ml-3 text-xl font-medium text-gray-900 transition-colors duration-200 title-font md:mb-0 hover:text-teal-500'>
+						<a className='flex items-center mb-4 ml-3 text-xl font-bold text-gray-900 transition-colors duration-200 title-font md:mb-0 hover:text-teal-500'>
 							Reddit Clone
 						</a>
 					</Link>

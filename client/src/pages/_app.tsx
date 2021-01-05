@@ -6,8 +6,10 @@ import {
 	LoginMutation,
 	MeDocument,
 	MeQuery,
-	RegisterMutation
+	RegisterMutation,
+	LogoutMutation
 } from '../generated/graphql';
+import Head from 'next/head';
 
 function updateQueryGeneric<Result, Query>(
 	cache: Cache,
@@ -63,6 +65,16 @@ const client = createClient({
 								}
 							}
 						);
+					},
+					logout: (_result, args, cache, info) => {
+						updateQueryGeneric<LogoutMutation, MeQuery>(
+							cache,
+							{ query: MeDocument },
+							_result,
+							() => ({
+								me: null
+							})
+						);
 					}
 				}
 			}
@@ -77,7 +89,12 @@ const client = createClient({
 function App({ Component, pageProps }: AppProps) {
 	return (
 		<Provider value={client}>
-			<Component {...pageProps}></Component>
+			<div className='font-poppins'>
+				<Head>
+					<link rel='icon' href='/favicon.ico' />
+				</Head>
+				<Component {...pageProps}></Component>
+			</div>
 		</Provider>
 	);
 }
