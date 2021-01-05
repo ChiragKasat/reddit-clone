@@ -1,12 +1,14 @@
-import Head from 'next/head'
+import Head from 'next/head';
+import Navbar from '../components/Navbar';
 
 export default function Home() {
-  return (
-    <div>
-      <Head>
-        <title>Reddit Clone | Home Page</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>        
-    </div>
-  )
+	return (
+		<div className='min-h-screen bg-gray-100'>
+			<Head>
+				<title>Reddit Clone | Home Page</title>
+				<link rel='icon' href='/favicon.ico' />
+			</Head>
+			<Navbar />
+		</div>
+	);
 }

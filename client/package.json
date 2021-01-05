@@ -9,6 +9,7 @@
 		"gen": "graphql-codegen --config codegen.yml"
 	},
 	"dependencies": {
+		"@urql/exchange-graphcache": "^3.3.3",
 		"autoprefixer": "^10.1.0",
 		"formik": "^2.2.6",
 		"graphql": "^15.4.0",

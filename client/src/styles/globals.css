@@ -20,4 +20,8 @@
 		@apply w-8 h-8 border-4 border-t-4 border-gray-100 border-solid rounded-full animate-spin;
 		border-top-color: #71717a;
 	}
+
+	.navbar-link {
+		@apply px-4 py-2 mr-5 transition-colors duration-200 rounded-lg outline-none cursor-pointer hover:text-teal-500 hover:bg-teal-100;
+	}
 }
