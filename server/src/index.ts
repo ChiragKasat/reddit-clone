@@ -11,7 +11,7 @@ import { createConnection } from 'typeorm';
 import { COOKIE_NAME, __prod__ } from './constants';
 import { Post } from './entities/Post';
 import { User } from './entities/User';
-import redis from 'redis';
+import Redis from 'ioredis';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
 import { MyContext } from './types';
@@ -29,7 +29,7 @@ const main = async () => {
 	const app = express();
 
 	const RedisStore = connectRedis(session);
-	const redisClient = redis.createClient();
+	const redis = new Redis();
 
 	app.use(
 		cors({
@@ -42,7 +42,7 @@ const main = async () => {
 		session({
 			name: COOKIE_NAME,
 			store: new RedisStore({
-				client: redisClient,
+				client: redis,
 				disableTouch: true
 			}),
 			secret: process.env.REDIS_SECRET || 'ywtfdgiwncpogyokwb',
@@ -62,7 +62,7 @@ const main = async () => {
 			resolvers: [InfoResolver, PostResolver, UserResolver],
 			validate: false
 		}),
-		context: ({ req, res }): MyContext => ({ req, res })
+		context: ({ req, res }): MyContext => ({ req, res, redis })
 	});
 
 	apolloServer.applyMiddleware({

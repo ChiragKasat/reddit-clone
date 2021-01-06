@@ -13,6 +13,9 @@ import {
 } from 'type-graphql';
 import { MyContext } from 'src/types';
 import { COOKIE_NAME } from '../constants';
+import { v4 } from 'uuid';
+import { sendMail } from '../utils/sendMail';
+import { FORGOT_PASSWORD_PREFIX } from '../constants';
 
 @InputType()
 class UsernamePasswordInput {
@@ -76,7 +79,7 @@ export class UserResolver {
 			};
 		}
 
-		if (options.password.length <= 3) {
+		if (options.password.length <= 5) {
 			return {
 				errors: [{ field: 'password', message: 'password too weak' }]
 			};
@@ -150,5 +153,75 @@ export class UserResolver {
 				}
 			})
 		);
+	}
+
+	@Mutation(() => Boolean)
+	async forgotPassword(
+		@Arg('email') email: string,
+		@Ctx() { redis }: MyContext
+	) {
+		const user = await User.findOne({ where: { email } });
+
+		if (!user) {
+			return false;
+		}
+
+		const token = v4();
+
+		await redis.set(
+			FORGOT_PASSWORD_PREFIX + token,
+			user.id,
+			'ex',
+			1000 * 60 * 60 * 24 //1 day
+		);
+
+		const link = `http://localhost:3000/change-password/${token}`;
+
+		await sendMail(
+			email,
+			'Reddit Clone | Reset password link',
+			`
+			<a href=${link}>Click here</a> to reset password.
+		`
+		);
+
+		return true;
+	}
+
+	@Mutation(() => UserResponse)
+	async changePassword(
+		@Arg('token') token: string,
+		@Arg('newPassword') newPassword: string,
+		@Ctx() { req, redis }: MyContext
+	): Promise<UserResponse> {
+		if (newPassword.length <= 5) {
+			return {
+				errors: [{ field: 'newPassword', message: 'password too weak' }]
+			};
+		}
+
+		const userId = await redis.get(FORGOT_PASSWORD_PREFIX + token);
+
+		if (!userId) {
+			return { errors: [{ field: 'token', message: 'token expired' }] };
+		}
+
+		const hashedPassword = await hash(newPassword);
+
+		const user = await User.findOne(userId);
+
+		if (!user) {
+			return { errors: [{ field: 'user', message: "user doesn't exist" }] };
+		}
+
+		user.password = hashedPassword;
+
+		await user.save();
+
+		await redis.del(FORGOT_PASSWORD_PREFIX + token);
+
+		req.session.userId = user.id;
+
+		return { user };
 	}
 }

@@ -1,4 +1,4 @@
-const { teal, black, white, gray, red } = require('tailwindcss/colors');
+const { teal, black, white, blueGray, red } = require('tailwindcss/colors');
 
 module.exports = {
 	purge: ['./src/**/*.tsx'],
@@ -8,7 +8,7 @@ module.exports = {
 			teal,
 			black,
 			white,
-			gray,
+			gray: blueGray,
 			red
 		},
 		extend: {

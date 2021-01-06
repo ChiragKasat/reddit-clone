@@ -27,7 +27,9 @@ const Login: React.FC<LoginProps> = () => {
 			</Head>
 
 			<div className='flex flex-col items-center justify-center w-screen h-screen bg-gray-100'>
-				<div className='mb-6 text-4xl font-bold'>Sign in to your account</div>
+				<div className='mb-6 text-4xl font-bold text-center'>
+					Sign in to your account
+				</div>
 				<Formik
 					initialValues={{ email: '', password: '' }}
 					validationSchema={LoginSchema}
@@ -42,13 +44,19 @@ const Login: React.FC<LoginProps> = () => {
 				>
 					{({ isSubmitting }) => (
 						<Form className='flex flex-col p-10 bg-white rounded-md shadow-md'>
-							<InputField type='text' name='email' label='Email' />
+							<InputField type='email' name='email' label='Email' />
 							<InputField type='password' name='password' label='Password' />
+
+							<Link href='/forgot-password'>
+								<a className='py-2 text-right text-teal-500'>
+									Forgot your password?
+								</a>
+							</Link>
 
 							<button
 								type='submit'
 								disabled={isSubmitting}
-								className='form-btn'
+								className='mt-2 form-btn'
 							>
 								{isSubmitting ? (
 									<div className='btn-spinner'></div>

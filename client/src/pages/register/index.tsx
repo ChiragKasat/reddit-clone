@@ -37,7 +37,9 @@ const Register: React.FC<RegisterProps> = () => {
 			</Head>
 
 			<div className='flex flex-col items-center justify-center w-screen h-screen bg-gray-100'>
-				<div className='mb-6 text-4xl font-bold'>Register your account</div>
+				<div className='mb-6 text-4xl font-bold text-center'>
+					Register your account
+				</div>
 				<Formik
 					initialValues={{ username: '', email: '', password: '' }}
 					validationSchema={RegisterSchema}
